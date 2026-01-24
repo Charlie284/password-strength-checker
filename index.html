@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Strength Checker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Password Strength Checker</h1>
+    <p class="subtitle">All checks are done locally in your browser.</p>
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Enter a password"
+      autocomplete="off"
+    />
+
+    <div class="meter">
+      <div id="meter-fill"></div>
+    </div>
+
+    <div id="strength-text">Start typing a password</div>
+
+    <ul id="feedback"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
