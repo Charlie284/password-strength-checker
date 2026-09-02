@@ -1,15 +1,28 @@
 # Password Strength Checker
 
-A fast, client-side password strength checker built with plain HTML, CSS, and JavaScript.
+A fast, client-side password guessability estimator built with plain HTML, CSS, and JavaScript.
 
 ## Features
-- Real-time strength evaluation
+- Real-time strength estimation based primarily on length, with penalties for predictable terms and repetition
 - Visual strength meter
 - Clear feedback on how to improve passwords
+- Screen-reader announcements when the result changes
 - No data leaves your browser
 
 ## How to use
 Open `index.html` in any modern browser and start typing a password.
 
 ## Security note
-All checks are performed locally. No passwords are stored or transmitted.
+
+All checks are performed locally. No passwords are stored or transmitted. The result is guidance,
+not a guarantee: this small estimator cannot model every leaked-password list or targeted guessing
+strategy. Prefer a password manager and unique generated passwords; never reuse a password because
+this page labels it strong.
+
+## Test
+
+Requires Node.js 20 or newer:
+
+```sh
+npm test
+```

@@ -15,16 +15,19 @@
       type="password"
       id="password"
       placeholder="Enter a password"
-      autocomplete="off"
+      aria-label="Password to evaluate"
+      autocomplete="new-password"
+      spellcheck="false"
     />
 
-    <div class="meter">
+    <div class="meter" aria-hidden="true">
       <div id="meter-fill"></div>
     </div>
 
-    <div id="strength-text">Start typing a password</div>
-
-    <ul id="feedback"></ul>
+    <div role="status" aria-live="polite" aria-atomic="true">
+      <div id="strength-text">Start typing a password</div>
+      <ul id="feedback"></ul>
+    </div>
   </div>
 
   <script src="script.js"></script>

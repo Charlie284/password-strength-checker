@@ -3,6 +3,14 @@ const meterFill = document.getElementById("meter-fill");
 const strengthText = document.getElementById("strength-text");
 const feedbackList = document.getElementById("feedback");
 
+const predictableTerms = [
+  "admin",
+  "letmein",
+  "password",
+  "qwerty",
+  "welcome",
+];
+
 passwordInput.addEventListener("input", () => {
   const password = passwordInput.value;
   const result = evaluatePassword(password);
@@ -10,53 +18,67 @@ passwordInput.addEventListener("input", () => {
 });
 
 function evaluatePassword(password) {
-  let score = 0;
+  if (!password) {
+    return { score: 0, feedback: [] };
+  }
+
   const feedback = [];
+  const normalizedLetters = password.toLowerCase().replace(/[^a-z]/g, "");
+  const usesPredictableTerm = predictableTerms.some(term => normalizedLetters.includes(term));
 
-  if (password.length >= 8) score += 1;
-  else feedback.push("Use at least 8 characters");
+  let score;
+  if (password.length < 8) score = 0;
+  else if (password.length < 12) score = 1;
+  else if (password.length < 16) score = 2;
+  else if (password.length < 20) score = 3;
+  else score = 4;
 
-  if (password.length >= 12) score += 1;
+  const characterClasses = [/[a-z]/, /[A-Z]/, /[0-9]/, /[^A-Za-z0-9]/]
+    .filter(pattern => pattern.test(password)).length;
+  if (password.length >= 12 && characterClasses >= 3) {
+    score += 1;
+  }
 
-  if (/[a-z]/.test(password)) score += 1;
-  else feedback.push("Add lowercase letters");
+  if (password.length < 12) {
+    feedback.push("Use a longer password or passphrase");
+  }
 
-  if (/[A-Z]/.test(password)) score += 1;
-  else feedback.push("Add uppercase letters");
-
-  if (/[0-9]/.test(password)) score += 1;
-  else feedback.push("Add numbers");
-
-  if (/[^A-Za-z0-9]/.test(password)) score += 1;
-  else feedback.push("Add symbols");
+  if (usesPredictableTerm) {
+    score = Math.min(score, 1);
+    feedback.push("Avoid predictable words and keyboard patterns");
+  }
 
   if (/(.)\1{2,}/.test(password)) {
-    score -= 1;
+    score = Math.min(score, 1);
     feedback.push("Avoid repeated characters");
   }
 
-  score = Math.max(0, Math.min(score, 6));
+  if (score < 3 && password.length >= 12 && !usesPredictableTerm) {
+    feedback.push("Prefer several unrelated words or a generated password");
+  }
+
+  score = Math.max(0, Math.min(score, 4));
 
   return { score, feedback };
 }
 
 function updateUI({ score, feedback }) {
-  const percentage = (score / 6) * 100;
+  const percentage = (score / 4) * 100;
   meterFill.style.width = percentage + "%";
 
   let color;
   let label;
 
-  if (score <= 1) {
+  if (score === 0) {
     color = "#ff4d4d";
     label = "Very Weak";
-  } else if (score <= 3) {
+  } else if (score === 1) {
     color = "#ffa500";
     label = "Weak";
-  } else if (score <= 4) {
+  } else if (score === 2) {
     color = "#ffd000";
     label = "Fair";
-  } else if (score <= 5) {
+  } else if (score === 3) {
     color = "#9be15d";
     label = "Strong";
   } else {
@@ -66,6 +88,7 @@ function updateUI({ score, feedback }) {
 
   meterFill.style.backgroundColor = color;
   strengthText.textContent = label;
+  strengthText.setAttribute("data-score", String(score));
 
   feedbackList.innerHTML = "";
   feedback.forEach(item => {
